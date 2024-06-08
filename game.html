@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Mapa del Quindío</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        
+        #map {
+            height: 80vh;
+            width: 100%;
+        }
+        .info {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div class="info">
+        <h2 id="user-info"></h2>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const apiKey = '';  
+
+        function loadMapScript() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places`;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        let map;
+        let currentIndex = 0;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let markers = [];
+        const currentUser = localStorage.getItem('currentUser');
+
+        if (!currentUser) {
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('user-info').innerText = `Usuario: ${currentUser} | Puntaje: ${score}`;
+        }
+
+        const locations = [
+            { 
+                lat: 4.451, 
+                lng: -75.670, 
+                name: 'Parque del Café', 
+                type: 'parque', 
+                icon: 'parque_cafe.ico',
+                questions: [
+                    {
+                        question: '¿En qué año fue fundado el Parque del Café?',
+                        options: ['1990', '1995', '2000', '2005', '2010'],
+                        answer: 1 
+                    },
+                    {
+                        question: '¿En qué municipio se encuentra el Parque del Café?',
+                        options: ['Armenia', 'Montenegro', 'Calarcá', 'Salento', 'Quimbaya'],
+                        answer: 1
+                    },
+                    {
+                        question: '¿Cuál es la altura máxima del Parque del Café?',
+                        options: ['1800m', '1900m', '2000m', '2100m', '2200m'],
+                        answer: 2
+                    },
+                    {
+                        question: '¿Cuál es la atracción más famosa del Parque del Café?',
+                        options: ['Montaña rusa', 'Teleférico', 'Acuaparque', 'Rueda panorámica', 'Torre mirador'],
+                        answer: 0
+                    }
+                ]
+            },
+            { 
+                lat: 4.536, 
+                lng: -75.749, 
+                name: 'Panaca', 
+                type: 'parque', 
+                icon: 'panaca.ico',
+                questions: [
+                    {
+                        question: '¿Qué significa PANACA?',
+                        options: ['Parque Nacional de la Cultura Agropecuaria', 'Parque Natural de la Cultura Agropecuaria', 'Parque Nacional de la Cultura Animal', 'Parque Natural de la Cultura Animal', 'Parque Natural de la Cultura Agraria'],
+                        answer: 0
+                    },
+                    {
+                        question: '¿En qué municipio se encuentra Panaca?',
+                        options: ['Armenia', 'Montenegro', 'Calarcá', 'Quimbaya', 'Salento'],
+                        answer: 3
+                    },
+                    {
+                        question: '¿Cuántas especies de animales se pueden encontrar en Panaca?',
+                        options: ['100', '150', '200', '250', '300'],
+                        answer: 4
+                    },
+                    {
+                        question: '¿Qué tipo de espectáculos ofrece Panaca?',
+                        options: ['Circo', 'Show de magia', 'Show de animales', 'Conciertos', 'Teatro'],
+                        answer: 2
+                    }
+                ]
+            },
+            { 
+                lat: 4.633, 
+                lng: -75.572, 
+                name: 'Salento', 
+                type: 'turistico', 
+                icon: 'salento.ico',
+                questions: [
+                    {
+                        question: '¿Salento es famoso por cuál valle?',
+                        options: ['Valle de Cocora', 'Valle de los Frailejones', 'Valle del Cauca', 'Valle de los Helechos', 'Valle de las Rosas'],
+                        answer: 0
+                    },
+                    {
+                        question: '¿Qué altura tiene la palma de cera, símbolo de Salento?',
+                        options: ['30m', '40m', '50m', '60m', '70m'],
+                        answer: 3
+                    },
+                    {
+                        question: '¿Cuál es el principal producto agrícola de Salento?',
+                        options: ['Café', 'Maíz', 'Caña de azúcar', 'Arroz', 'Cacao'],
+                        answer: 0
+                    },
+                    {
+                        question: '¿Qué río importante pasa cerca de Salento?',
+                        options: ['Río Quindío', 'Río Cauca', 'Río Magdalena', 'Río San Juan', 'Río Atrato'],
+                        answer: 0
+                    }
+                ]
+            }
+        ];
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 4.463, lng: -75.749 },
+                zoom: 10,
+            });
+
+            addMarker(locations[currentIndex]);
+        }
+
+        function addMarker(location) {
+            const marker = new google.maps.Marker({
+                position: { lat: location.lat, lng: location.lng },
+                map: map,
+                title: location.name,
+                icon: location.icon
+            });
+
+            marker.addListener('click', () => {
+                askQuestion(location);
+            });
+
+            markers.push(marker);
+        }
+
+        function askQuestion(location) {
+            const questionData = location.questions[currentQuestionIndex];
+            Swal.fire({
+                title: questionData.question,
+                input: 'select',
+                inputOptions: questionData.options,
+                inputPlaceholder: 'Selecciona una opción',
+                showCancelButton: true,
+                confirmButtonText: 'Responder',
+                inputValidator: (value) => {
+                    return new Promise((resolve) => {
+                        if (value === '') {
+                            resolve('Por favor selecciona una opción');
+                        } else {
+                            checkAnswer(parseInt(value), questionData.answer);
+                            resolve();
+                        }
+                    });
+                }
+            });
+        }
+
+        function checkAnswer(userAnswer, correctAnswer) {
+            if (userAnswer === correctAnswer) {
+                score += 3;
+                Swal.fire('¡Correcto!', `Puntaje actual: ${score}`, 'success').then(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < locations[currentIndex].questions.length) {
+                        askQuestion(locations[currentIndex]); // Continuar con la siguiente pregunta del mismo lugar
+                    } else {
+                        currentQuestionIndex = 0;
+                        markers[currentIndex].setMap(null); // Deshabilitar el marcador anterior
+                        currentIndex++;
+                        if (currentIndex < locations.length) {
+                            addMarker(locations[currentIndex]); // Habilitar el siguiente marcador
+                            Swal.fire('¡Bien hecho!', 'Has completado este lugar. Continúa con el siguiente.', 'success');
+                        } else {
+                            saveScore();
+                        }
+                    }
+                    document.getElementById('user-info').innerText = `Usuario: ${currentUser} | Puntaje: ${score}`;
+                });
+            } else {
+                if (score > 0) {
+                    score -= 1;
+                }
+                Swal.fire('Incorrecto', `Puntaje actual: ${score}. Intenta de nuevo.`, 'error');
+                document.getElementById('user-info').innerText = `Usuario: ${currentUser} | Puntaje: ${score}`;
+            }
+        }
+
+        function saveScore() {
+            const scores = JSON.parse(localStorage.getItem('scores')) || [];
+            scores.push({ user: currentUser, score: score });
+            localStorage.setItem('scores', JSON.stringify(scores));
+            Swal.fire({
+                title: 'Juego terminado',
+                text: `Tu puntaje es ${score}`,
+                icon: 'success',
+                confirmButtonText: 'Ver puntajes'
+            }).then(() => {
+                window.location.href = 'scores.html';
+            });
+        }
+
+        // Cargar el script del mapa después de que la página se haya cargado
+        document.addEventListener('DOMContentLoaded', loadMapScript);
+    </script>
+</body>
+</html>
