@@ -1,0 +1,17 @@
+## This file should be placed in the root of your repository
+
+
+# environment
+node_modules
+.env
+
+# OS generated files
+.DS_Store
+Thumbs.db
+.vscode
+
+# IDE generated files
+.idea
+
+
+game3.html

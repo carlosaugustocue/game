@@ -121,3 +121,9 @@ img > icon {
 .info {
     color: #fff;
 }
+
+.marker {
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: block;
+}
