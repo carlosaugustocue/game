@@ -5,26 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juego de Mapa del Quindío</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <style>
-        
-        #map {
-            height: 80vh;
-            width: 100%;
-        }
-        .info {
-            margin: 20px;
-        }
-    </style>
+    <link rel="icon" href="img/eje.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <div id="map"></div>
-    <div class="info">
-        <h2 id="user-info"></h2>
+<body class="game-view">
+    <div class="container-game">
+        <h1 class="main-title">Aventura del Cafe</h1>
+        <div id="map"></div>
+        <div class="info">
+            <h2 id="user-info"></h2>
+        </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        const apiKey = '';  
+        const apiKey = 'AIzaSyCzHuEMsavUNgGhUUdnAGiyfVZT9nonNvU';  
 
         function loadMapScript() {
             const script = document.createElement('script');
@@ -48,11 +43,11 @@
 
         const locations = [
             { 
-                lat: 4.451, 
-                lng: -75.670, 
+                lat: 4.540, 
+                lng: -75.771, 
                 name: 'Parque del Café', 
                 type: 'parque', 
-                icon: 'parque_cafe.ico',
+                icon: 'img/parqueCafe.ico',
                 questions: [
                     {
                         question: '¿En qué año fue fundado el Parque del Café?',
@@ -71,17 +66,17 @@
                     },
                     {
                         question: '¿Cuál es la atracción más famosa del Parque del Café?',
-                        options: ['Montaña rusa', 'Teleférico', 'Acuaparque', 'Rueda panorámica', 'Torre mirador'],
+                        options: ['Montaña rusa Krater', 'Teleférico', 'Acuaparque', 'Rueda panorámica', 'Torre mirador'],
                         answer: 0
                     }
                 ]
             },
             { 
-                lat: 4.536, 
-                lng: -75.749, 
+                lat: 4.610, 
+                lng: -75.818, 
                 name: 'Panaca', 
                 type: 'parque', 
-                icon: 'panaca.ico',
+                icon: 'img/panaca.ico',
                 questions: [
                     {
                         question: '¿Qué significa PANACA?',
@@ -110,7 +105,7 @@
                 lng: -75.572, 
                 name: 'Salento', 
                 type: 'turistico', 
-                icon: 'salento.ico',
+                icon: 'img/salento.ico',
                 questions: [
                     {
                         question: '¿Salento es famoso por cuál valle?',
@@ -131,6 +126,35 @@
                         question: '¿Qué río importante pasa cerca de Salento?',
                         options: ['Río Quindío', 'Río Cauca', 'Río Magdalena', 'Río San Juan', 'Río Atrato'],
                         answer: 0
+                    }
+                ]
+            },
+            { 
+                lat: 4.432, 
+                lng: -75.733, 
+                name: 'Recuca', 
+                type: 'turistico', 
+                icon: 'img/recuca.ico',
+                questions: [
+                    {
+                        question: '¿Qué significa el acrónimo "Recuca"?',
+                        options: ['Recorrido Cultural de Colombia', 'Recreación de la Cultura Colombiana', 'Recorrido de la Cultura Cafetera', 'Reserva Cultural Cafetera', 'Red de Cultura Cafetera'],
+                        answer: 2
+                    },
+                    {
+                        question: '¿Qué actividad principal pueden realizar los visitantes en Recuca?',
+                        options: ['Visitar un museo de arte', 'Recolectar café', 'Realizar senderismo', 'Pescar en un lago', 'Participar en talleres de artesanía'],
+                        answer: 1
+                    },
+                    {
+                        question: '¿Qué pueden aprender los visitantes sobre el proceso del café en Recuca?',
+                        options: ['Solo sobre la recolección', 'Solo sobre la plantación', 'Todo el proceso, desde la siembra hasta la taza', 'Solo sobre la comercialización', 'Solo sobre la exportación'],
+                        answer: 2
+                    },
+                    {
+                        question: '¿Qué tipo de turismo promueve Recuca?',
+                        options: ['Turismo de playa', 'Turismo cultural y gastronómico', 'Turismo de aventura extrema', 'Turismo urbano', 'Turismo de compras'],
+                        answer: 1
                     }
                 ]
             }
